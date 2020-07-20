@@ -1,11 +1,24 @@
 
 import os
+from zipfile import ZipFile
 
 import requests
 from bs4 import BeautifulSoup
 
 DIR_BASE = os.path.dirname(os.path.abspath(__file__))
-CAMINHO_DO_DOWNLOAD = os.path.join(DIR_BASE, 'download', 'scc.zip')
+DIR_DE_DOWNLOAD = os.path.join(DIR_BASE, 'download')
+CAMINHO_DO_ARQUIVO = os.path.join(DIR_DE_DOWNLOAD, 'scc.zip')
+
+
+def extrair_zip() -> list:
+    """Extraia e retorne uma lista ordenada com o nome dos arquivos extraídos."""
+    arquivo_zip = ZipFile(CAMINHO_DO_ARQUIVO, 'r')
+    arquivo_zip.extractall(DIR_DE_DOWNLOAD)
+    arquivos_extraidos = [x.filename for x in arquivo_zip.infolist()]
+    arquivo_zip.close()
+    os.remove(CAMINHO_DO_ARQUIVO)
+
+    return sorted(arquivos_extraidos)
 
 
 def fazer_download(url: str) -> None:
@@ -15,7 +28,7 @@ def fazer_download(url: str) -> None:
     if resp.status_code != 200:
         raise Exception(f'{resp.status_code} - Falha no download {url}')
 
-    with open(CAMINHO_DO_DOWNLOAD, 'wb') as f:
+    with open(CAMINHO_DO_ARQUIVO, 'wb') as f:
         f.write(resp.content)
 
 
