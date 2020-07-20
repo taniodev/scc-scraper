@@ -1,6 +1,22 @@
 
+import os
+
 import requests
 from bs4 import BeautifulSoup
+
+DIR_BASE = os.path.dirname(os.path.abspath(__file__))
+CAMINHO_DO_DOWNLOAD = os.path.join(DIR_BASE, 'download', 'scc.zip')
+
+
+def fazer_download(url: str) -> None:
+    """Fazer o download do arquivo."""
+    resp = requests.get(url)
+
+    if resp.status_code != 200:
+        raise Exception(f'{resp.status_code} - Falha no download {url}')
+
+    with open(CAMINHO_DO_DOWNLOAD, 'wb') as f:
+        f.write(resp.content)
 
 
 def obter_url() -> str:
