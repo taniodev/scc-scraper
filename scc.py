@@ -46,3 +46,11 @@ def obter_url() -> str:
     url_do_arquivo = soup.find('a', class_='bundle-download')['href']
 
     return url_do_arquivo
+
+
+def renomear_arquivos(nomes_originais: list, novos_nomes: list) -> None:
+    """Renomeia os arquivos."""
+    for indice, _ in enumerate(nomes_originais):
+        arquivo_original = os.path.join(DIR_DE_DOWNLOAD, nomes_originais[indice])
+        novo_arquivo = os.path.join(DIR_DE_DOWNLOAD, novos_nomes[indice])
+        os.rename(arquivo_original, novo_arquivo)
