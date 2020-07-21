@@ -5,6 +5,8 @@ from zipfile import ZipFile
 import requests
 from bs4 import BeautifulSoup
 
+import servidor
+
 DIR_BASE = os.path.dirname(os.path.abspath(__file__))
 DIR_DE_DOWNLOAD = os.path.join(DIR_BASE, 'download')
 CAMINHO_DO_ARQUIVO = os.path.join(DIR_DE_DOWNLOAD, 'scc.zip')
@@ -32,6 +34,17 @@ def fazer_download(url: str) -> None:
         f.write(resp.content)
 
 
+def fazer_upload(arquivos_extraidos: list, novos_nomes: list) -> None:
+    """Envie os arquivos extraidos para o servidor com os nomes apropriados."""
+    servidor.conectar()
+
+    for indice, _ in enumerate(arquivos_extraidos):
+        arquivo_local = os.path.join(DIR_DE_DOWNLOAD, arquivos_extraidos[indice])
+        caminho_remoto = f'media/Saude com Ciencia/{novos_nomes[indice]}'
+        servidor.upload(caminho_remoto, arquivo_local)
+        os.remove(arquivo_local)
+
+
 def obter_url() -> str:
     """Retorne a URL direta para fazer download do arquivo."""
     # Obter a URL que leva para a pagina dos episódios da semana
@@ -48,19 +61,12 @@ def obter_url() -> str:
     return url_do_arquivo
 
 
-def renomear_arquivos(nomes_originais: list, novos_nomes: list) -> None:
-    """Renomeia os arquivos."""
-    for indice, _ in enumerate(nomes_originais):
-        arquivo_original = os.path.join(DIR_DE_DOWNLOAD, nomes_originais[indice])
-        novo_arquivo = os.path.join(DIR_DE_DOWNLOAD, novos_nomes[indice])
-        os.rename(arquivo_original, novo_arquivo)
-
-
 if __name__ == '__main__':
     url = obter_url()
     fazer_download(url)
     arquivos_extraidos = extrair_zip()
 
+    # Os arquivos serão salvos no servidor com esses nomes
     novos_nomes = [
         '01 - Saude com Ciencia.mp3',
         '02 - Saude com Ciencia.mp3',
@@ -69,4 +75,4 @@ if __name__ == '__main__':
         '05 - Saude com Ciencia.mp3',
     ]
 
-    renomear_arquivos(arquivos_extraidos, novos_nomes)
+    fazer_upload(arquivos_extraidos, novos_nomes)
