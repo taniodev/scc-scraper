@@ -54,3 +54,19 @@ def renomear_arquivos(nomes_originais: list, novos_nomes: list) -> None:
         arquivo_original = os.path.join(DIR_DE_DOWNLOAD, nomes_originais[indice])
         novo_arquivo = os.path.join(DIR_DE_DOWNLOAD, novos_nomes[indice])
         os.rename(arquivo_original, novo_arquivo)
+
+
+if __name__ == '__main__':
+    url = obter_url()
+    fazer_download(url)
+    arquivos_extraidos = extrair_zip()
+
+    novos_nomes = [
+        '01 - Saude com Ciencia.mp3',
+        '02 - Saude com Ciencia.mp3',
+        '03 - Saude com Ciencia.mp3',
+        '04 - Saude com Ciencia.mp3',
+        '05 - Saude com Ciencia.mp3',
+    ]
+
+    renomear_arquivos(arquivos_extraidos, novos_nomes)
